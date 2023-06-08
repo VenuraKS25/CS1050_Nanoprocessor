@@ -1,0 +1,17 @@
+# compile vhdl design source files
+vhdl xil_defaultlib  \
+"../../../../../Multiplexers/8 way 4 bit MUX/nanoprocessor.srcs/sources_1/new/8_way_4_bit_MUX.vhd" \
+"../../../../../Lab_4/Lab_4.srcs/sources_1/new/Decoder_2_to_4.vhd" \
+"../../../../../Lab_4/Lab_4.srcs/sources_1/new/Decoder_3_to_8.vhd" \
+"../../../../../Lab3/Lab3/Lab3.srcs/sources_1/new/FA.vhd" \
+"../../../../Lab8.srcs/sources_1/new/InstructionDecoder.vhd" \
+"../../../../../Lab3/Lab3/Lab3.srcs/sources_1/new/Lab3HA.vhd" \
+"../../../../Lab8.srcs/sources_1/imports/new/MUX.vhd" \
+"../../../../Lab8.srcs/sources_1/new/NanoProcessor.vhd" \
+"../../../../../Lab3/Lab3/Lab3.srcs/sources_1/new/RCA_4.vhd" \
+"../../../../../La6/La6.srcs/sources_1/new/Reg.vhd" \
+"../../../../Lab8.srcs/sources_1/new/RegBank.vhd" \
+"../../../../Lab8.srcs/sim_1/new/TB_Nanoprocessor.vhd" \
+
+# Do not sort compile order
+nosort
