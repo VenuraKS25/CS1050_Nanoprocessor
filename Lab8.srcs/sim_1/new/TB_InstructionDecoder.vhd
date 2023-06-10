@@ -50,10 +50,15 @@ UUT: InstructionDecoder port map(
 );
 
     process begin
-        InsBus <= "101110001010";
+        InsBus <= "100010001010";
         wait for 60 ns;
-        InsBus <= "011110000000";
-        --wait for 30 ns;
+        InsBus <= "100100000001";
+        wait for 60 ns;
+        InsBus <= "010100000000";
+        wait for 60 ns;
+        InsBus <= "000010100000";
+        wait for 60 ns;
+        InsBus <= "110000000111";
         wait;
     end process;
 

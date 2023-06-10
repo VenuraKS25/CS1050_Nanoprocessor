@@ -72,14 +72,16 @@ signal DecOut_1 : std_logic_vector(7 downto 0);
 signal RegSel : std_logic_vector(2 downto 0);
 signal ResetRegSel : std_logic_vector(2 downto 0);
 signal Res : std_logic;
+signal Res_R0, Res_R1, Res_R2, Res_R3, Res_R4, Res_R5, Res_R6, Res_R7 : std_logic;
 
 begin
 
-    process(Res) begin
-        if Res = '1' then
-            DecOut_1 <= "11111111";
-        end if;
-    end process;
+--    process(Res) begin
+--        if Res = '1' then
+--            DecOut_1 <= "11111111";
+--        end if;
+--    end process;
+    
     
     Decoder_3_to_8_0 : Decoder_3_to_8 port map(
         I => RegSel,
@@ -93,63 +95,72 @@ begin
         Y => DecOut_1
         );
     
+    
     Reg_0 : Reg port map(
         D => A,
         EN => DecOut_0(0),
         Clk => Clk,
         Q => R_0,
-        Reset => DecOut_1(0)
+        Reset => Res_R0
     );
     Reg_1 : Reg port map(
         D => A,
         EN => DecOut_0(1),
         Clk => Clk,
         Q => R_1,
-        Reset => DecOut_1(1)
+        Reset => Res_R1
     );
     Reg_2 : Reg port map(
         D => A,
         EN => DecOut_0(2),
         Clk => Clk,
         Q => R_2,
-        Reset => DecOut_1(2)
+        Reset => Res_R2
     );
     Reg_3 : Reg port map(
         D => A,
         EN => DecOut_0(3),
         Clk => Clk,
         Q => R_3,
-        Reset => DecOut_1(3)
+        Reset => Res_R3
     );
     Reg_4 : Reg port map(
         D => A,
         EN => DecOut_0(4),
         Clk => Clk,
         Q => R_4,
-        Reset => DecOut_1(4)
+        Reset => Res_R4
     );
     Reg_5 : Reg port map(
         D => A,
         EN => DecOut_0(5),
         Clk => Clk,
         Q => R_5,
-        Reset => DecOut_1(5)
+        Reset => Res_R5
     );
     Reg_6 : Reg port map(
         D => A,
         EN => DecOut_0(6),
         Clk => Clk,
         Q => R_6,
-        Reset => DecOut_1(6)
+        Reset => Res_R6
     );
     Reg_7 : Reg port map(
         D => A,
         EN => DecOut_0(7),
         Clk => Clk,
         Q => R_7,
-        Reset => DecOut_1(7)
+        Reset => Res_R7
     );
-    
+   
+   Res_R0 <= DecOut_1(0) OR Res;
+   Res_R1 <= DecOut_1(1) OR Res;
+   Res_R2 <= DecOut_1(2) OR Res;
+   Res_R3 <= DecOut_1(3) OR Res;
+   Res_R4 <= DecOut_1(4) OR Res;
+   Res_R5 <= DecOut_1(5) OR Res;
+   Res_R6 <= DecOut_1(6) OR Res;
+   Res_R7 <= DecOut_1(7) OR Res; 
     
     A <= RegData;
     RegSel <= EN;

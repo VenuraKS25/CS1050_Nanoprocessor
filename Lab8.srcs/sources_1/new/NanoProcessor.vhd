@@ -11,14 +11,26 @@ use IEEE.NUMERIC_STD.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
+
+
+
+
+
+--ADD SLOW CLOCK BEFORE GOING TO BASYS 3
+
+
+
+
+
 entity NanoProcessor is
     Port ( Clk : in STD_LOGIC;
            Reset : in STD_LOGIC;
-           Instruction : in std_logic_vector(11 downto 0);
            RegLedOut : out STD_LOGIC_VECTOR (3 downto 0);
-           RegLedOut_R0 : out std_logic_vector(3 downto 0);
+           Instruction : out std_logic_vector(11 downto 0);
+           MUXOut : out std_logic_vector(3 downto 0);
            Zero : out STD_LOGIC;
-           Overflow : out STD_LOGIC);
+           Overflow : out STD_LOGIC;
+           NextValue : out std_logic_vector(2 downto 0));
 end NanoProcessor;
 
 architecture Behavioral of NanoProcessor is
@@ -64,7 +76,7 @@ end component;
 
 component ROM
     port(
-        address : in STD_LOGIC_VECTOR (3 downto 0);
+        address : in STD_LOGIC_VECTOR (2 downto 0);
         data : out STD_LOGIC_VECTOR (11 downto 0)
     );
 end component;
@@ -84,7 +96,7 @@ end component;
 
 component Counter
     port(
-        Jump : in std_logic_vector(2 downto 0);
+        NextIns : in std_logic_vector(2 downto 0);
         Res : in STD_LOGIC;
         Clk : in STD_LOGIC;
         Q : out STD_LOGIC_VECTOR (2 downto 0)
@@ -129,6 +141,19 @@ component MUX
     );
 end component;
 
+component MUX_3_bit_2_way
+    Port (
+       D0 : in STD_LOGIC_VECTOR (2 downto 0);
+       D1 : in STD_LOGIC_VECTOR (2 downto 0);
+       M_out : out STD_LOGIC_VECTOR (2 downto 0);
+       J_F :in STD_LOGIC);
+end component;
+
+component Slow_Clk
+    Port ( Clk_in : in STD_LOGIC;
+           Clk_out : out STD_LOGIC);
+end component;
+
 signal RegOut_0 : std_logic_vector(3 downto 0);
 signal RegOut_1 : std_logic_vector(3 downto 0);
 signal RegOut_2 : std_logic_vector(3 downto 0);
@@ -158,6 +183,12 @@ signal InsAddSubSel : std_logic;
 signal InsJumpFlag : std_logic;
 signal InsJMPAddress : std_logic_vector(2 downto 0);
 signal Reset_s : std_logic;
+
+signal counter_Out : std_logic_vector(2 downto 0);
+signal nextInsAddress : std_logic_vector(2 downto 0);
+signal pcMUXOut : std_logic_vector(2 downto 0);
+
+signal slowedClock : std_logic;
 
 begin
 
@@ -207,7 +238,7 @@ begin
     
     RCA_4_0 : RCA_4 port map
     (
-       M => '0',
+       M => InsAddSubSel,
        A0 => Mux0_Out(0),
        A1 => Mux0_Out(1),
        A2 => Mux0_Out(2),
@@ -236,7 +267,7 @@ begin
     InstructionDecoder_0 : InstructionDecoder port map
     (
         InsBus => Instruction_s,
-        RegChkJMP => "0000",
+        RegChkJMP => Mux1_Out,
         RegEn => InsRegSel,
         RegReset => InsResetRegSel,
         LoadSel => InsLoadSel,
@@ -248,19 +279,47 @@ begin
         JMPAddress => InsJMPAddress
     );
     
---    process is begin
---        assert false
---            report "Imm Value : " & integer'image(to_integer(InsImmValue))
---            severity note;
---        wait;
---    end process;
+    ROM_0 : ROM port map(
+        address => counter_Out,
+        data => instruction_s
+    );
     
+    Counter_0 : Counter port map(
+        Q => counter_out,
+        NextIns => pcMUXOut,
+        Res => Reset_s,-----------------------------------------------------------------------------------------------------------
+        Clk => Clock
+    );
+    
+    RCA_3_0 : RCA_3 port map(
+        A0 => counter_Out(0),
+        A1 => counter_Out(1),
+        A2 => counter_Out(2),
+        S0 => nextInsAddress(0),
+        S1 => nextInsAddress(1),
+        S2 => nextInsAddress(2)
+    );
+    
+    MUX_3_bit_2_way_0 : MUX_3_bit_2_way port map
+        (
+            D0 => InsJmpAddress,
+            D1 => nextInsAddress,
+            J_F => InsJumpFlag,
+            M_out => pcMUXOut
+        );
+        
+    Slow_Clk_0 : Slow_Clk port 
+    map(
+        Clk_in => Clock,
+        Clk_out => slowedClock
+        );
+        
     Clock <= Clk;
-    
     Reset_s <= Reset;
-    Instruction_s <= Instruction;
     RegLedOut <= RegOut_7;
-    RegLedOut_R0 <= RegOut_0;
     Zero <= RCA4_Zero;
     Overflow <= RCA4_Overflow;
+    Instruction <= Instruction_s;
+    MUXOut <= Mux1_Out;
+    NextValue <= nextInsAddress;
 end Behavioral;

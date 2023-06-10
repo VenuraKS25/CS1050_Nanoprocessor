@@ -24,7 +24,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx leaf cells in this code.
@@ -57,7 +57,7 @@ signal regSelMux_1_s : std_logic_vector(2 downto 0);
 signal regSelMux_2_s : std_logic_vector(2 downto 0);
 signal addSubSel_s   : std_logic;
 signal jumpFlag_s    : std_logic;
-signal jmpAddress_s  : std_logic_vector(2 downto 0);
+signal jmpAddress_s  : std_logic_vector(2 downto 0) := "000";
 
 signal insType : std_logic_vector(1 downto 0);
 signal regA : std_logic_vector(2 downto 0);
@@ -72,8 +72,12 @@ begin
     regB <= instruction(6 downto 4);
     immediateVal <= instruction(3 downto 0);
     
-    process(InsType)
+    process(InsType, regA, regB, immediateVal, regCheckJMP_s)
      begin
+     --regEn_s <= "000";
+        jumpFlag_s <= '0';
+        regReset_s <= "000";
+        regSelMux_2_s <= regA;
         if insType = "00" then
             addSubSel_s <= '0';
             regSelMux_1_s <= regA;
@@ -86,13 +90,20 @@ begin
             regEn_s <= regA;        
         elsif insType = "01" then
             addSubSel_s <= '1';
+            regReset_s <= regB;
             regSelMux_1_s <= regB;
             regSelMux_2_s <= regA;
             loadSel_s <= '0';
             regEn_s <= regA; 
+        elsif insType = "11" then
+            if regCheckJMP_s = "0000" then
+                jmpAddress_s <= immediateVal(2 downto 0);
+                jumpFlag_s <= '1';
+            end if; 
         end if;
     end process;
     
+    regCheckJMP_s <= RegChkJMP;
     RegEn <= regEn_s;
     RegReset <= regReset_s;
     LoadSel <= loadSel_s;
@@ -100,4 +111,6 @@ begin
     RegSelMux_1 <= regSelMux_1_s;
     RegSelMux_2 <= regSelMux_2_s;
     AddSubSel <= addSubSel_s;
+    JumpFlag <= jumpFlag_s;
+    JMPAddress <= jmpAddress_s;
 end Behavioral;

@@ -41,49 +41,58 @@ component NanoProcessor
     Port ( 
         Clk : in STD_LOGIC;
         Reset : in STD_LOGIC;
-        Instruction : in std_logic_vector(11 downto 0);
         RegLedOut : out STD_LOGIC_VECTOR (3 downto 0);
-        RegLedOut_R0 : out std_logic_vector (3 downto 0);
+        Instruction : out std_logic_vector(11 downto 0);
+        MUXOut : out std_logic_vector(3 downto 0);
         Zero : out STD_LOGIC;
-        Overflow : out STD_LOGIC
+        Overflow : out STD_LOGIC;
+        NextValue : out std_logic_vector(2 downto 0)
     );
 end component;
 
 signal Clk : std_logic := '1';
 signal Reset : std_logic := '0';
-signal RegLedOut : std_logic_vector(3 downto 0);
-signal RegLedOut_R0 : std_logic_vector(3 downto 0);
-signal Instruction : std_logic_vector(11 downto 0); 
+signal RegLedOut : std_logic_vector(3 downto 0); 
 signal Zero : std_logic;
 signal Overflow : std_logic;
+signal Instruction : std_logic_vector(11 downto 0);
+signal MUXOut : std_logic_vector(3 downto 0);
+signal NextValue : std_logic_vector(2 downto 0);
 
 begin
     UUT: NanoProcessor port map(
         Clk => Clk,
         Reset => Reset,
-        Instruction => Instruction, 
         RegLedOut => RegLedOut,
-        RegLedOut_R0 => RegLedOut_R0,
-        Overflow => Overflow
+        Overflow => Overflow,
+        Instruction => Instruction,
+        MUXOut =>  MUXOut,
+        NextValue => NextValue
     );
     
     process begin
-        wait for 30 ns;
+        wait for 40 ns;
         Clk <= not Clk;
     end process;
     
     process begin
-        wait for 45 ns;
-        Instruction <= "101110001010";
         wait for 60 ns;
-        Instruction <= "100000001010";
-        wait for 60 ns;
-        Instruction <= "001110000000";
-        wait for 60 ns;
-        Instruction <= "011110000000";
---        wait for 60 ns;
---        Instruction <= "UUUUUUUUUUUU";
+        Reset <= '1';
+        wait for 80 ns;
+        Reset <= '0';
         wait;
+--        Instruction <= "101110000001";
+--        wait for 60 ns;
+--        Instruction <= "101100000010";
+--        wait for 60 ns;
+--        Instruction <= "101010000011";
+--        wait for 60 ns;
+--        Instruction <= "001111100000";
+--        wait for 60 ns;
+--        Instruction <= "001111010000";
+--        wait for 60 ns;
+--        Instruction <= "110000000000";
+--        wait;
     end process;
 
 

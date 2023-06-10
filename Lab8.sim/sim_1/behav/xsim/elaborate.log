@@ -21,6 +21,11 @@ Compiling architecture behavioral of entity xil_defaultlib.FA [fa_default]
 Compiling architecture behavioral of entity xil_defaultlib.RCA_4 [rca_4_default]
 Compiling architecture behavioral of entity xil_defaultlib.MUX [mux_default]
 Compiling architecture behavioral of entity xil_defaultlib.InstructionDecoder [instructiondecoder_default]
+Compiling architecture behavioral of entity xil_defaultlib.ROM [rom_default]
+Compiling architecture behavioral of entity xil_defaultlib.Counter [counter_default]
+Compiling architecture behavioral of entity xil_defaultlib.RCA_3 [rca_3_default]
+Compiling architecture behavioral of entity xil_defaultlib.MUX_3_bit_2_way [mux_3_bit_2_way_default]
+Compiling architecture behavioral of entity xil_defaultlib.Slow_Clk [slow_clk_default]
 Compiling architecture behavioral of entity xil_defaultlib.NanoProcessor [nanoprocessor_default]
 Compiling architecture behavioral of entity xil_defaultlib.tb_nanoprocessor
 Built simulation snapshot TB_Nanoprocessor_behav
